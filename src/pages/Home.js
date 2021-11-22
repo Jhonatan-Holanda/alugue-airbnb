@@ -57,14 +57,7 @@ export default function Home() {
             ]);
 
             setLoading(false);
-        }
-
-        console.log(`
-            newHouses: ${newHouses},
-            favorites: ${favorites},
-            nextToUser: ${nextToUser},
-            withOffer: ${withOffer},
-        `);
+        };
 
         load();
     }, [])
@@ -91,38 +84,6 @@ export default function Home() {
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{paddingHorizontal: 15}}>
-                {/* <New 
-                    cover={require('../assets/house1.jpg')}
-                    name="Casa Praia Grande"
-                    description="Casa nova uma quadra do mar, lugar seguro e monitorado 24horas."
-                    price="R$ 1400,00"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <New 
-                    cover={require('../assets/house2.jpg')}
-                    name="Casa Ubatuba"
-                    description="Casa nova uma quadra do mar, lugar seguro e monitorado 24horas."
-                    price="R$ 1100,00"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <New 
-                    cover={require('../assets/house3.jpg')}
-                    name="Casa Paraty"
-                    description="Casa nova uma quadra do mar, lugar seguro e monitorado 24horas."
-                    price="R$ 1330,00"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <New 
-                    cover={require('../assets/house4.jpg')}
-                    name="Casa Floripa"
-                    description="Casa nova uma quadra do mar, lugar seguro e monitorado 24horas."
-                    price="R$ 1200,00"
-                    onPress={() => navigation.navigate('detail')}
-                /> */}
-
                 {
                     newHouses.map(house => (
                         <New
@@ -142,26 +103,17 @@ export default function Home() {
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{paddingHorizontal: 15}}>
-                <House
-                    cover={require('../assets/house4.jpg')}
-                    description="Casa muito bonita na praia, com vista para o mar, aberta 24 horas."
-                    price="R$ 1220,00"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <House
-                    cover={require('../assets/house5.jpg')}
-                    description="Casa muito bonita na praia, com vista para o mar, aberta 24 horas."
-                    price="R$ 950,00"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <House
-                    cover={require('../assets/house6.jpg')}
-                    description="Casa muito bonita na praia, com vista para o mar, aberta 24 horas."
-                    price="R$ 1099,00"
-                    onPress={() => navigation.navigate('detail')}
-                />
+                {
+                    nextToUser.map(house => (
+                        <House
+                            key={house.id}
+                            cover={house.cover}
+                            description={house.description}
+                            price={house.price}
+                            onPress={() => navigation.navigate('detail')}
+                        />
+                    ))
+                }
             </ScrollView>
             
             <Text style={[styles.title, { marginTop: 20 }]}>
@@ -169,26 +121,17 @@ export default function Home() {
             </Text>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{paddingHorizontal: 15}}>
-                <Recommend 
-                    cover={require('../assets/house1.jpg')}
-                    house="Casa Floripa"
-                    offer="20%"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <Recommend 
-                    cover={require('../assets/house2.jpg')}
-                    house="Casa Ubatuba"
-                    offer="20%"
-                    onPress={() => navigation.navigate('detail')}
-                />
-
-                <Recommend 
-                    cover={require('../assets/house3.jpg')}
-                    house="Casa Paraty"
-                    offer="20%"
-                    onPress={() => navigation.navigate('detail')}
-                />
+                {
+                    withOffer.map(house => (
+                        <Recommend
+                            key={house.id}
+                            cover={house.cover}
+                            house={house.name}
+                            offer={house.offer}
+                            onPress={() => navigation.navigate('detail')}
+                        />
+                    ))
+                }
             </ScrollView>
 
         </ScrollView>

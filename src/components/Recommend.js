@@ -16,7 +16,7 @@ export default function Recommend(props){
             </Text>
 
             <Text style={[styles.description, styles.shadow]}>
-                {props.offer} OFF
+                {props.offer}% OFF
             </Text>
         </ImageBackground>
     </TouchableOpacity>

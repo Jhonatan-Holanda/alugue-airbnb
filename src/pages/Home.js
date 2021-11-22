@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
@@ -6,10 +6,76 @@ import { useNavigation } from '@react-navigation/native';
 
 import New from '../components/New';
 import House from '../components/House';
-import Recommend from '../components/Recommend'
+import Recommend from '../components/Recommend';
+
+import { api } from '../services/api';
 
 export default function Home() {
     const navigation = useNavigation();
+
+    const [houses, setHouses] = useState([]);
+    const [favorites, setFavorites] = useState([]);
+    const [nextToUser, setNextToUser] = useState([]);
+    const [withOffer, setWithOffer] = useState([]);
+    const [newHouses, setNewHouses] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const getNew = useCallback(async () => {
+        const newHousesAPI = await api.getNew();
+        setNewHouses(newHousesAPI);
+    });
+
+    const getFavorites = useCallback(async () => {
+        const FavoritesHousesAPI = await api.getFavorites();
+        setFavorites(FavoritesHousesAPI);
+    });
+
+    const getNextToUser = useCallback(async () => {
+        const nextToUserAPI = await api.getNextToUser();
+        setNextToUser(nextToUserAPI);
+    });
+
+    const getWithOffer = useCallback(async () => {
+        const withOfferAPI = await api.getWithOffer();
+        setWithOffer(withOfferAPI);
+    });
+
+    const getAll = useCallback(() => {
+        const housesAPI = api.houses;
+        setHouses(housesAPI);
+    });
+
+
+    useEffect(() => {
+        getAll();
+        async function load() {
+            await Promise.all([
+                getNew(),
+                getFavorites(),
+                getNextToUser(),
+                getWithOffer(),
+            ]);
+
+            setLoading(false);
+        }
+
+        console.log(`
+            newHouses: ${newHouses},
+            favorites: ${favorites},
+            nextToUser: ${nextToUser},
+            withOffer: ${withOffer},
+        `);
+
+        load();
+    }, [])
+
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <Text>Carregando...</Text>
+            </View>
+        );
+    }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor: '#FFF', }}>
@@ -25,7 +91,7 @@ export default function Home() {
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{paddingHorizontal: 15}}>
-                <New 
+                {/* <New 
                     cover={require('../assets/house1.jpg')}
                     name="Casa Praia Grande"
                     description="Casa nova uma quadra do mar, lugar seguro e monitorado 24horas."
@@ -55,7 +121,20 @@ export default function Home() {
                     description="Casa nova uma quadra do mar, lugar seguro e monitorado 24horas."
                     price="R$ 1200,00"
                     onPress={() => navigation.navigate('detail')}
-                />
+                /> */}
+
+                {
+                    newHouses.map(house => (
+                        <New
+                            key={house.id}
+                            cover={house.cover}
+                            name={house.name}
+                            description={house.description}
+                            price={house.price}
+                            onPress={() => navigation.navigate('detail')}
+                        />
+                    ))
+                }
             </ScrollView>
 
             <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center'}}>

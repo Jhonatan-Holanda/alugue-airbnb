@@ -92,7 +92,7 @@ export default function Home() {
                             name={house.name}
                             description={house.description}
                             price={house.price}
-                            onPress={() => navigation.navigate('detail')}
+                            onPress={() => navigation.navigate('detail', { houseId: house.id })}
                         />
                     ))
                 }
@@ -110,7 +110,7 @@ export default function Home() {
                             cover={house.cover}
                             description={house.description}
                             price={house.price}
-                            onPress={() => navigation.navigate('detail')}
+                            onPress={() => navigation.navigate('detail', { houseId: house.id })}
                         />
                     ))
                 }
@@ -128,7 +128,7 @@ export default function Home() {
                             cover={house.cover}
                             house={house.name}
                             offer={house.offer}
-                            onPress={() => navigation.navigate('detail')}
+                            onPress={() => navigation.navigate('detail', { houseId: house.id })}
                         />
                     ))
                 }

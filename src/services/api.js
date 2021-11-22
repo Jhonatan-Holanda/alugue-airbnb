@@ -100,6 +100,13 @@ class Api {
     const house = this.houses.find(house => house.id === id);
     house.isFavorite = !house.isFavorite;
   }
+
+  async getHouse(id) {
+    await delay(3000);
+
+    const house = this.houses.find(house => house.id === id);
+    return house;
+  }
 }
 
 const api = new Api();

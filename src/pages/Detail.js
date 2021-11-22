@@ -1,35 +1,43 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Feather, Ionicons, FontAwesome } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import Stars from 'react-native-stars';
 import SwiperComponent from '../components/Swiper';
+import { Loading } from '../components/Loading';
 import { api } from '../services/api';
 
 export default function Detail({ route }) {
   const { houseId } = route.params;
   const [house, setHouse] = useState();
   const [loading, setLoading] = useState(true);
+  const [favorite, setFavorite] = useState();
 
   const getHouse = useCallback(async () => {
     const houseAPI = await api.getHouse(houseId);
     console.log(houseAPI);
     setHouse(houseAPI);
+    setFavorite(houseAPI.isFavorite);
+  });
+
+  const handleFavorite = useCallback(async () => {
+    await api.toggleFavorite(house.id);
+    setFavorite(!favorite);
   });
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
       await getHouse();
-      console.log(`Casa selecionada: ${house}`);
       setLoading(false);
     };
     load();
-  }, []);
+  }, [house]);
 
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Carregando...</Text>
+        <Loading />
       </View>
     );
   }
@@ -38,6 +46,14 @@ export default function Detail({ route }) {
     <View style={styles.container}>
       <View style={styles.swiperContent}>
         <SwiperComponent />
+        <TouchableOpacity onPress={handleFavorite} style={styles.favoriteButton}>
+          {favorite ? (
+            <FontAwesome name="heart" size={24} color="black" />
+          ) : (
+            <FontAwesome name="heart-o" size={24} color="black" />
+          )}
+        </TouchableOpacity>
+
       </View>
       <View style={styles.headerContent}>
         <View style={{ width: '65%' }}>
@@ -97,6 +113,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 340,
     width: '100%',
+    position: 'relative',
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#fff3',
+    padding: 8,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerContent: {
     paddingHorizontal: 20,

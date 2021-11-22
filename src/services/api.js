@@ -96,9 +96,11 @@ class Api {
   }
 
   async toggleFavorite(id) {
-    await delay(2000);
+    await delay(500);
     const house = this.houses.find(house => house.id === id);
     house.isFavorite = !house.isFavorite;
+
+    return house;
   }
 
   async getHouse(id) {
@@ -110,6 +112,5 @@ class Api {
 }
 
 const api = new Api();
-api.getNew();
 
 export { api };

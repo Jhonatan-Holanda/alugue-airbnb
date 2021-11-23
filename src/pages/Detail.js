@@ -15,7 +15,6 @@ export default function Detail({ route }) {
 
   const getHouse = useCallback(async () => {
     const houseAPI = await api.getHouse(houseId);
-    console.log(houseAPI);
     setHouse(houseAPI);
     setFavorite(houseAPI.isFavorite);
   });
@@ -48,7 +47,7 @@ export default function Detail({ route }) {
         <SwiperComponent />
         <TouchableOpacity onPress={handleFavorite} style={styles.favoriteButton}>
           {favorite ? (
-            <FontAwesome name="heart" size={24} color="black" />
+            <FontAwesome name="heart" size={24} color="#eb4034" />
           ) : (
             <FontAwesome name="heart-o" size={24} color="black" />
           )}

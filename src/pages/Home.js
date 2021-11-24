@@ -9,12 +9,14 @@ import { Favorite } from '../components/Favorite';
 import New from '../components/New';
 import House from '../components/House';
 import Recommend from '../components/Recommend';
+import Search from '../components/Search';
 
 import { api } from '../services/api';
 
 export default function Home() {
   const navigation = useNavigation();
 
+  const [search, setSearch] = useState('');
   const [houses, setHouses] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [nextToUser, setNextToUser] = useState([]);
@@ -59,6 +61,12 @@ export default function Home() {
     setHouses(housesAPI);
   });
 
+  const filter = useCallback(async (str) => {
+    const filtered = await api.filter(str);
+
+    setHouses(filtered);
+  });
+
 
   useEffect(() => {
     getAll();
@@ -74,7 +82,11 @@ export default function Home() {
     };
 
     load();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    filter(search);
+  }, [search]);
 
   if (loading) {
     return (
@@ -88,92 +100,126 @@ export default function Home() {
     <ScrollView
       showsVerticalScrollIndicator={false}
       style={{ backgroundColor: '#FFF', }}
-      refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
     >
       <View style={styles.header}>
         <View style={styles.inputArea}>
           <Feather name="search" size={24} color="#000" />
-          <TextInput placeholder="O que está procurando?" style={styles.input} />
+          <TextInput
+            placeholder="O que está procurando?"
+            style={styles.input}
+            value={search}
+            onChangeText={setSearch}
+          />
         </View>
       </View>
 
-      {favorites.length > 0 && (
-        <View>
-          <View style={styles.contentNew}>
-            <Text style={styles.title}>Favoritos</Text>
+      {
+        search.length === 0 ? (
+          <>
+            {favorites.length > 0 && (
+              <View>
+                <View style={styles.contentNew}>
+                  <Text style={styles.title}>Favoritos</Text>
+                </View>
+
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
+                  {
+                    favorites.map(house => (
+                      <Favorite
+                        key={house.id}
+                        cover={house.cover}
+                        name={house.name}
+                        price={house.price}
+                        onPress={() => navigation.navigate('detail', { houseId: house.id })}
+                      />
+                    ))
+                  }
+                </ScrollView>
+              </View>
+
+            )}
+
+            <View style={{ ...styles.contentNew, marginTop: 16 }}>
+              <Text style={styles.title}>Novidades</Text>
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
+              {
+                newHouses.map(house => (
+                  <New
+                    key={house.id}
+                    cover={house.cover}
+                    name={house.name}
+                    description={house.description}
+                    price={house.price}
+                    onPress={() => navigation.navigate('detail', { houseId: house.id })}
+                  />
+                ))
+              }
+            </ScrollView>
+
+            <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center' }}>
+              <Text style={[styles.title, { marginTop: 20 }]}>Próximo a você</Text>
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
+              {
+                nextToUser.map(house => (
+                  <House
+                    key={house.id}
+                    cover={house.cover}
+                    description={house.description}
+                    price={house.price}
+                    onPress={() => navigation.navigate('detail', { houseId: house.id })}
+                  />
+                ))
+              }
+            </ScrollView>
+
+            <Text style={[styles.title, { marginTop: 20 }]}>
+              Dica do dia
+            </Text>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
+              {
+                withOffer.map(house => (
+                  <Recommend
+                    key={house.id}
+                    cover={house.cover}
+                    house={house.name}
+                    offer={house.offer}
+                    onPress={() => navigation.navigate('detail', { houseId: house.id })}
+                  />
+                ))
+              }
+            </ScrollView>
+          </>
+        ) : (
+          <View>
+            {houses.length > 0 ? (
+              <View style={{ paddingHorizontal: 20 }}>
+                <Text>Resultados: {houses.length}</Text>
+                {houses.map(house => (
+                  <Search
+                    key={house.id}
+                    cover={house.cover}
+                    name={house.name}
+                    description={house.description}
+                    price={house.price}
+                    onPress={() => navigation.navigate('detail', { houseId: house.id })}
+                  />
+                ))}
+              </View>
+            ) : (
+              <View style={{ padding: 16 }}>
+                <Text style={{ color: "#000", fontSize: 24, fontWeight: 'bold', width: '100%', textAlign: 'center' }}>
+                  Nenhum resultado encontrado
+                </Text>
+              </View>
+            )}
           </View>
-
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
-            {
-              favorites.map(house => (
-                <Favorite
-                  key={house.id}
-                  cover={house.cover}
-                  name={house.name}
-                  price={house.price}
-                  onPress={() => navigation.navigate('detail', { houseId: house.id })}
-                />
-              ))
-            }
-          </ScrollView>
-        </View>
-
-      )}
-
-      <View style={{ ...styles.contentNew, marginTop: 16 }}>
-        <Text style={styles.title}>Novidades</Text>
-      </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
-        {
-          newHouses.map(house => (
-            <New
-              key={house.id}
-              cover={house.cover}
-              name={house.name}
-              description={house.description}
-              price={house.price}
-              onPress={() => navigation.navigate('detail', { houseId: house.id })}
-            />
-          ))
-        }
-      </ScrollView>
-
-      <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center' }}>
-        <Text style={[styles.title, { marginTop: 20 }]}>Próximo a você</Text>
-      </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
-        {
-          nextToUser.map(house => (
-            <House
-              key={house.id}
-              cover={house.cover}
-              description={house.description}
-              price={house.price}
-              onPress={() => navigation.navigate('detail', { houseId: house.id })}
-            />
-          ))
-        }
-      </ScrollView>
-
-      <Text style={[styles.title, { marginTop: 20 }]}>
-        Dica do dia
-      </Text>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15 }}>
-        {
-          withOffer.map(house => (
-            <Recommend
-              key={house.id}
-              cover={house.cover}
-              house={house.name}
-              offer={house.offer}
-              onPress={() => navigation.navigate('detail', { houseId: house.id })}
-            />
-          ))
-        }
-      </ScrollView>
+        )}
 
     </ScrollView>
   );

@@ -21,7 +21,7 @@ export default function New(props) {
                 <Text style={styles.badge}>Novo</Text>
             </View>
 
-            <Text style={styles.description}>
+            <Text style={styles.description} numberOfLines={3}>
                 {props.description}
             </Text>
 

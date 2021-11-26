@@ -44,7 +44,7 @@ export default function Detail({ route }) {
   return (
     <View style={styles.container}>
       <View style={styles.swiperContent}>
-        <SwiperComponent />
+        <SwiperComponent images={house.images} />
         <TouchableOpacity onPress={handleFavorite} style={styles.favoriteButton}>
           {favorite ? (
             <FontAwesome name="heart" size={24} color="#eb4034" />
@@ -52,7 +52,6 @@ export default function Detail({ route }) {
             <FontAwesome name="heart-o" size={24} color="black" />
           )}
         </TouchableOpacity>
-
       </View>
       <View style={styles.headerContent}>
         <View style={{ width: '65%' }}>
@@ -80,24 +79,14 @@ export default function Detail({ route }) {
         {house.description}
       </Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 15, marginTop: 35 }}>
-        <View style={styles.slide}>
-          <Image
-            source={require('../assets/house5.jpg')}
-            style={{ width: 90, height: 90, borderRadius: 8 }}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            source={require('../assets/house6.jpg')}
-            style={{ width: 90, height: 90, borderRadius: 8 }}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            source={require('../assets/house2.jpg')}
-            style={{ width: 90, height: 90, borderRadius: 8 }}
-          />
-        </View>
+        {house.images.map((image, index) => (
+          <View style={styles.slide} key={index}>
+            <Image
+              source={image}
+              style={{ width: 90, height: 90, borderRadius: 8 }}
+            />
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
